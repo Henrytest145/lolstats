@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Cambia esto según el motor de base de datos que uses
+  url      = env("DATABASE_URL")
+}
+
+model Summoner {
+  puuId      String       @id @default(cuid())
+  gameName   String
+  tagName    String
+  updateDate DateTime     @updatedAt
+  iconId     Int
+  level      Int
+  rankFlex   String
+  rankSolo   String
+  champions  SummonerChampion[]
+
+  game Game[] @relation("GameSummoners")
+}
+
+
+
+model Team {
+  id         String      @id @default(cuid())
+  side       String
+  win        Boolean
+  bans       Ban[]
+  objectives Objective[]
+  game       Game        @relation(fields: [gameId], references: [id])
+  gameId     String
+}
+
+model Objective {
+  id            String  @id @default(cuid())
+  baron         Int
+  champion      Int
+  dragon        Int
+  horde         Int
+  hinibitor     Int
+  riftHerald    Int
+  tower         Int
+  team          Team    @relation(fields: [teamId], references: [id])
+  teamId        String
+}
+
+model Ban {
+  id        String  @id @default(cuid())
+  championId Int
+  pickTurn   Int
+  team       Team   @relation(fields: [teamId], references: [id])
+  teamId     String
+}
+
+model Game {
+  id          String       @id @default(cuid())
+  dateCreate  DateTime
+  dateEnd     DateTime
+  gameType    String
+  gameMode    String
+  gameDuration Int
+  mapId       Int
+  server      String
+  queueId     Int
+  summoner    Summoner[]   @relation("GameSummoners")
+  teams       Team[]
+  gameStats   GameStat[]   // Relación con GameStat
+}
+
+model GameStat {
+  id             String  @id @default(cuid())
+  gamePosition   Int
+  championLevel  Int
+  championId     Int
+  championName   String
+  deaths         Int
+  kills          Int
+  assists        Int
+  lane           String
+  item0          Int
+  item1          Int
+  item2          Int
+  item3          Int
+  item4          Int
+  item5          Int
+  item6          Int
+  profileIcon    Int
+  role           String
+  teamId         String
+  win            Boolean
+  game           Game    @relation(fields: [gameId], references: [id])  // Relación opuesta a gameStats
+  gameId         String
+}
+
+
+model Champion {
+  id            String              @id @default(cuid())
+  championId    Int
+  championName  String
+  summoners     SummonerChampion[]
+}
+
+model SummonerChampion {
+  id          String    @id @default(cuid())
+  summonerId  String
+  championId  String
+  summoner    Summoner  @relation(fields: [summonerId], references: [puuId])
+  champion    Champion  @relation(fields: [championId], references: [id])
+}
