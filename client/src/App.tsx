@@ -10,6 +10,7 @@ import Stats from './pages/Stats';
 
 function App() {
   const [inputValue, setInputValue] = useState<string>('');
+  const [server, setServer] = useState<string>('');
   const data = 1;
   console.log('valor desde app', inputValue);
 
@@ -17,7 +18,7 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Home inputValue={inputValue} setInputValue={setInputValue} />} />
+          <Route path="/" element={<Home inputValue={inputValue} setInputValue={setInputValue} server={server} setServer={setServer} />} />
           <Route path="/Champions" element={<Champions />} />
           <Route path="/Player" element={<Player data={data} />} />
           <Route path="/Patch" element={<Patch />} />

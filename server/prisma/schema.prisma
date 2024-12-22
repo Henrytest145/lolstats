@@ -109,3 +109,16 @@ model SummonerChampion {
   summoner    Summoner  @relation(fields: [summonerId], references: [puuId])
   champion    Champion  @relation(fields: [championId], references: [id])
 }
+
+model Server {
+  id String @id @default(cuid())
+  name String
+  region Region
+}
+
+enum Region {
+  americas
+  asia
+  europe
+  sea
+}

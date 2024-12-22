@@ -4,7 +4,6 @@ import { getUser } from "../controllers/apiController";
 const router = express.Router();
 
 
-router.get('/player/:username?/:tagName?', getUser);
-
+router.get('/player/:username?/:tagName?/:server?', getUser);
 
 export default router;
