@@ -48,6 +48,7 @@ export const getUser = async (req:Request,res:Response) => {
         throw new Error("Server not found");
     }
     console.log(regionData.region);
+    console.log("Procede a hacer el fetch");
     
         const result = await fetch(`https://${regionData.region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${username}/${tagName}?api_key=${process.env.RIOT_KEY}`);
         if (!result.ok) {
@@ -69,7 +70,7 @@ export const getUser = async (req:Request,res:Response) => {
         user.revisionDate = data2.revisionDate;
         user.summonerLevel = data2.summonerLevel;
         console.log('info obtenida: ', data2);
-        res.status(200).json({userInfo: user});
+        res.status(200).json({data: user});
         
         
     } catch (error:unknown) {

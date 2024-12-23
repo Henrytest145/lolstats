@@ -1,6 +1,6 @@
 import { TextField, Grid2, Paper, Select, MenuItem, InputLabel, FormControl, FormHelperText, SelectChangeEvent } from '@mui/material';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
-import detectRegion from '../utilities/detectRegion';
+import { useNavigate } from 'react-router-dom';
 
 interface HomeProps {
   inputValue: string;
@@ -10,29 +10,27 @@ interface HomeProps {
 }
 
 const Home = ({ inputValue, setInputValue, server, setServer }: HomeProps) => {
-  const [error, setError] = useState<string>(''); // Estado de error para la validación del servidor
-  
-  // Manejo del cambio en el input de texto
+  const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
+
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
-  // Manejo de la selección del servidor
+
   const handleServerSelect = (event: SelectChangeEvent<string>) => {
     setServer(event.target.value);
-    setError(''); // Limpiar el error cuando se selecciona un servidor
+    setError('');
   };
 
-  // Manejo de la tecla 'Enter' en el input de texto
   const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       if (!server) {
         setError('Por favor, selecciona un servidor');
-        return; // Si no se selecciona un servidor, no ejecutar el fetch
+        return;
       }
       
       console.log(`Input value: ${inputValue}`);
-      const region = detectRegion(server); // Obtener la región a partir del servidor
       
       try {
         console.log('Iniciando fetch...');
@@ -44,9 +42,8 @@ const Home = ({ inputValue, setInputValue, server, setServer }: HomeProps) => {
         const username = parts[0];
         const tagName = parts[1];
         console.log(username, tagName);
-        console.log(region);
         
-        const response = await fetch(`https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${username}/${tagName}?api_key=${process.env.REACT_APP_RIOT_KEY}`, {
+        const response = await fetch(`http://localhost:3000/api/player/${username}/${tagName}/${server}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -55,15 +52,18 @@ const Home = ({ inputValue, setInputValue, server, setServer }: HomeProps) => {
         
         if (response.ok) {
           const data = await response.json();
-          console.log(data); // Aquí puedes ver el mensaje de respuesta de la API
+          console.log(data.data);
+          
+          navigate('/Player',{state:{fetchData:data.data}});
+          return
         } else {
           console.log('Error al consumir la API', response.status);
+          return
         }
-
-        console.log('Fetch terminado');
         
       } catch (error) {
         console.log(`Error del fetch: ${error}`);
+        return
       }
     }
   };
@@ -91,11 +91,11 @@ const Home = ({ inputValue, setInputValue, server, setServer }: HomeProps) => {
               label="Server"
               onChange={handleServerSelect}
             >
-              <MenuItem value="LAN">LAN</MenuItem>
-              <MenuItem value="LAS">LAS</MenuItem>
-              <MenuItem value="BR">BR</MenuItem>
-              <MenuItem value="KR">KR</MenuItem>
-              <MenuItem value="CH">CH</MenuItem>
+              <MenuItem value="la1">LAN</MenuItem>
+              <MenuItem value="la2">LAS</MenuItem>
+              <MenuItem value="na1">NA</MenuItem>
+              <MenuItem value="kr">KR</MenuItem>
+              <MenuItem value="vn">VN</MenuItem>
               <MenuItem value="TW">TW</MenuItem>
               <MenuItem value="JP">JP</MenuItem>
               <MenuItem value="PH">PH</MenuItem>

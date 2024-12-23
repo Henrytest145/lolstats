@@ -4,11 +4,13 @@ import path from "path";
 import { Request, Response } from "express";
 import apiRoutes from "./routes/api";
 import dotenv from "dotenv";
+import cors from "cors";
 dotenv.config();
 
 const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 const app = express();
+app.use(cors());
 app.use(cookieParser()); // for parsing cookies
 app.use(express.json()); // for parsing application/json
 
