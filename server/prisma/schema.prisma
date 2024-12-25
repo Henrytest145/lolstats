@@ -1,113 +1,327 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql" // Cambia esto según el motor de base de datos que uses
-  url      = env("DATABASE_URL")
-}
-
 model Summoner {
-  puuId      String       @id @default(cuid())
-  gameName   String
-  tagName    String
-  updateDate DateTime     @updatedAt
-  iconId     Int
-  level      Int
-  rankFlex   String
-  rankSolo   String
-  champions  SummonerChampion[]
-
-  game Game[] @relation("GameSummoners")
+  puuid           String          @id @default(uuid())
+  id              String?
+  accountId       BigInt?
+  profileIconId   BigInt?
+  summonerLevel   BigInt?
+  revisionDate    BigInt?
+  championsPlayed ChampionsPlayed?
+  championsMastery ChampionsMastery?
+  elo             Elo?
+  gameParticipants GameParticipants[]
 }
 
-
-
-model Team {
-  id         String      @id @default(cuid())
-  side       String
-  win        Boolean
-  bans       Ban[]
-  objectives Objective[]
-  game       Game        @relation(fields: [gameId], references: [id])
-  gameId     String
+model ChampionStats {
+  id                    Int       @id @default(autoincrement())
+  hp                    Decimal?
+  hpperlevel            Decimal?
+  mp                    Decimal?
+  mpperlevel            Decimal?
+  movespeed             Decimal?
+  armor                 Decimal?
+  armorperlevel         Decimal?
+  spellblock            Decimal?
+  spellblockperevel     Decimal?
+  attackrange           Decimal?
+  hpregen               Decimal?
+  hpregenperlevel       Decimal?
+  mpregen               Decimal?
+  mpregenperlevel       Decimal?
+  crit                  Decimal?
+  critperlevel          Decimal?
+  attackdamage          Decimal?
+  attackdamageperlevel  Decimal?
+  attackspeedperlevel   Decimal?
+  attackspeed           Decimal?
+  champion              Champion  @relation(fields: [championid], references: [id])
+  championid            String
 }
 
-model Objective {
-  id            String  @id @default(cuid())
-  baron         Int
-  champion      Int
-  dragon        Int
-  horde         Int
-  hinibitor     Int
-  riftHerald    Int
-  tower         Int
-  team          Team    @relation(fields: [teamId], references: [id])
-  teamId        String
+model Champion {
+  id                String          @id
+  key               Int?            @unique
+  name              String?
+  title             String?
+  type              String?
+  lore              String?
+  blurb             String?
+  full              String?
+  sprite            String?
+  x                 Int?
+  y                 Int?
+  w                 Int?
+  h                 Int?
+  championStats     ChampionStats[]
+  tips              Tips[]
+  championOverview  ChampionOverview?
+  championImage     ChampionImage[]
+  championSpells    ChampionSpells[]
+  championPassive   ChampionPassive?
+  championsPlayed   ChampionsPlayed[]
+  championsMastery  ChampionsMastery[]
 }
 
-model Ban {
-  id        String  @id @default(cuid())
-  championId Int
-  pickTurn   Int
-  team       Team   @relation(fields: [teamId], references: [id])
-  teamId     String
+model Liga {
+  id              Int            @id @default(autoincrement())
+  catalogoLigaId  Int
+  division        Int
+  catalogoLiga    CatalogoLigas  @relation(fields: [catalogoLigaId], references: [id])
+  elo             Elo[]
+}
+
+model Elo {
+  jugadorId     String         @id
+  tipoPartida   String?
+  ligaId        Int?
+  division      Int?
+  points        Int?
+  liga          Liga?          @relation(fields: [ligaId], references: [id])
+  summoner      Summoner?      @relation(fields: [jugadorId], references: [puuid])
+}
+
+model CatalogoLigas {
+  id       Int     @id @default(autoincrement())
+  nombre   String?
+  ligas    Liga[]
+}
+
+model ChampionImage {
+  id             Int       @id @default(autoincrement())
+  num            Int?
+  name           String?
+  chromas        Boolean?
+  type           String?
+  champion       Champion  @relation(fields: [championId], references: [id])
+  championId     String
+}
+
+model Tips {
+  id          BigInt       @id @default(autoincrement())
+  content     String?
+  enemyTip    Boolean?
+  champion    Champion     @relation(fields: [championId], references: [id])
+  championId  String
+}
+
+model ChampionOverview {
+  id          Int       @id @default(autoincrement())
+  attack      Int?
+  defense     Int?
+  magic       Int?
+  difficultty Int?
+  champion    Champion  @relation(fields: [championId], references: [id])
+  championId  String    @unique
+}
+
+model ChampionSpells {
+  id            String        @id
+  name          String?
+  description   String?
+  tooltip       String?
+  maxrank       Int?
+  cooldownburn  String?
+  costburn      Int?
+  costtype      String?
+  maxammo       String?
+  rangeburn     String?
+  champion      Champion      @relation(fields: [championId], references: [id])
+  championId    String
+  spellImage    SpellImage[]
+}
+
+model SpellImage {
+  id                  Int             @id @default(autoincrement())
+  full                String?
+  sprite              String?
+  group               String?
+  x                   Int?
+  y                   Int?
+  w                   Int?
+  z                   Int?
+  resource            String?
+  championSpell       ChampionSpells  @relation(fields: [championIdSpell], references: [id])
+  championIdSpell     String
+}
+
+model ChampionPassive {
+  id              String      @id
+  name            String?
+  description     String?
+  champion        Champion    @relation(fields: [championId], references: [id])
+  championId      String      @unique
+}
+
+model ChampionsPlayed {
+  playerId    String       @unique
+  championId  String
+  summoner    Summoner     @relation(fields: [playerId], references: [puuid])
+  champion    Champion     @relation(fields: [championId], references: [id])
+  @@id([playerId, championId])
+}
+
+model ChampionsMastery {
+  playerId                     String       @id
+  championKey                  Int
+  championLevel                BigInt?
+  championPoints               BigInt?
+  lastPlayTime                 BigInt?
+  championPointsSinceLastLevel BigInt?
+  championPointsUntilNextLevel BigInt?
+  markRequiredForNextLevel     Int?
+  tokensEarned                 BigInt?
+  championSeasonMilestone      BigInt?
+  summoner                     Summoner     @relation(fields: [playerId], references: [puuid])
+  champion                     Champion     @relation(fields: [championKey], references: [key])
 }
 
 model Game {
-  id          String       @id @default(cuid())
-  dateCreate  DateTime
-  dateEnd     DateTime
-  gameType    String
-  gameMode    String
-  gameDuration Int
-  mapId       Int
-  server      String
-  queueId     Int
-  summoner    Summoner[]   @relation("GameSummoners")
-  teams       Team[]
-  gameStats   GameStat[]   // Relación con GameStat
+  gameId              BigInt             @id
+  endOfGameResult     String?
+  gameCreation        BigInt?
+  gameDuration        Int?
+  gameEndTimestamp    BigInt?
+  gameMode            String?
+  gameName            String?
+  gameStartTimestamp  BigInt?
+  gameType            String?
+  gameVersion         String?
+  mapId               Int?
+  platformId          String?
+  queueId             Int?
+  tournamentCode      String?
+  participants        GameParticipants[]
 }
 
-model GameStat {
-  id             String  @id @default(cuid())
-  gamePosition   Int
-  championLevel  Int
-  championId     Int
-  championName   String
-  deaths         Int
-  kills          Int
-  assists        Int
-  lane           String
-  item0          Int
-  item1          Int
-  item2          Int
-  item3          Int
-  item4          Int
-  item5          Int
-  item6          Int
-  profileIcon    Int
-  role           String
-  teamId         String
-  win            Boolean
-  game           Game    @relation(fields: [gameId], references: [id])  // Relación opuesta a gameStats
-  gameId         String
+model GameParticipants {
+  id          Int                  @id @default(autoincrement())
+  playerId    String
+  gameId      BigInt
+  summoner    Summoner             @relation(fields: [playerId], references: [puuid])
+  game        Game                 @relation(fields: [gameId], references: [gameId])
+  stats       GameParticipantStats[]
 }
 
-
-model Champion {
-  id            String              @id @default(cuid())
-  championId    Int
-  championName  String
-  summoners     SummonerChampion[]
-}
-
-model SummonerChampion {
-  id          String    @id @default(cuid())
-  summonerId  String
-  championId  String
-  summoner    Summoner  @relation(fields: [summonerId], references: [puuId])
-  champion    Champion  @relation(fields: [championId], references: [id])
+model GameParticipantStats {
+  id                          BigInt     @id @default(autoincrement())
+  participantId               Int
+  allPings                    Int?
+  assistMePings               Int?
+  assists                     Int?
+  baronKills                  Int?
+  basicPings                  Int?
+  bountyLevel                 Int?
+  champExperience             Int?
+  champLevel                  Int?
+  championId                  Int?
+  championName                String?
+  championTransform           Int?
+  commandPings                Int?
+  consumablesPurchased        Int?
+  damageDealtToBuildings      Int?
+  damageDealtToObjectives     Int?
+  damageDealtToTurrets        Int?
+  damageSelfMitigated         Int?
+  dangerPings                 Int?
+  deaths                      Int?
+  detectorWardsPlaced         Int?
+  doubleKills                 Int?
+  dragonKills                 Int?
+  eligibleForProgression      Boolean?
+  enemyMissingPings           Int?
+  enemyVisionPings            Int?
+  firstBloodAssist            Boolean?
+  firstBloodKill              Boolean?
+  firstTowerAssist            Boolean?
+  gameEndedInEarlySurrender   Boolean?
+  gameEndedInSurrender        Boolean?
+  getBackPings                Int?
+  goldEarned                  Int?
+  goldSpent                   Int?
+  holdPings                   Int?
+  individualPosition          String?
+  inhibitorKills              Int?
+  inhibitorTakedowns          Int?
+  inhibitorsLost              Int?
+  item0                       Int?
+  item1                       Int?
+  item2                       Int?
+  item3                       Int?
+  item4                       Int?
+  item5                       Int?
+  item6                       Int?
+  itemsPurchased              Int?
+  killingSprees               Int?
+  kills                       Int?
+  lane                        String?
+  largestCriticalStrike       Int?
+  largestKillingSpree         Int?
+  largestMultiKill            Int?
+  longestTimeSpentLiving      Int?
+  magicDamageDealt            Int?
+  magicDamageDealtToChampions Int?
+  magicDamageTaken            Int?
+  needVisionPings             Int?
+  neutralMinionsKilled        Int?
+  nexusKills                  Int?
+  nexusLost                   Int?
+  nexusTakedowns              Int?
+  objectivesStolen            Int?
+  objectivesStolenAssists     Int?
+  onMyWayPings                Int?
+  participantIdRef            GameParticipants @relation(fields: [participantId], references: [id])
+  pentakills                  Int?
+  physicalDamageDealt         Int?
+  physicalDamageDealtToChampions Int?
+  physicalDamageTaken         Int?
+  profileIcon                 Int?
+  pushPings                   Int?
+  pentaKills                  Int?
+  quadraKills                 Int?
+  role                        String?
+  sightWardsBoughtInGame      Int?
+  spell1Casts                 Int?
+  spell2Casts                 Int?
+  spell3Casts                 Int?
+  spell4Casts                 Int?
+  summoner1Casts              Int?
+  summoner1Id                 Int?
+  summoner2Casts              Int?
+  summoner2Id                 Int?
+  teamId                      Int?
+  teamPosition                String?
+  timeCCingOthers             Int?
+  timePlayed                  Int?
+  totalDamageDealt            Int?
+  totalDamageDealtToChampions Int?
+  totalDamageTaken            Int?
+  totalHeal                   Int?
+  totalHealsOnTeammates       Int?
+  totalMinionsKilled          Int?
+  totalTimeCCDealt            Int?
+  totalTimeSpentDead          Int?
+  totalUnitsHealed            Int?
+  tripleKills                 Int?
+  trueDamageDealt             Int?
+  trueDamageDealtToChampions  Int?
+  trueDamageTaken             Int?
+  turretKills                 Int?
+  turretTakedowns             Int?
+  turretsLost                 Int?
+  visionClearedPings          Int?
+  visionScore                 Int?
+  visionWardsBoughtInGame     Int?
+  wardsKilled                 Int?
+  wardsPlaced                 Int?
+  win                         Boolean?
 }
 
 model Server {
