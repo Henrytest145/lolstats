@@ -1,130 +1,17 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Region" AS ENUM ('americas', 'asia', 'europe', 'sea');
 
-  - You are about to drop the column `championId` on the `Champion` table. All the data in the column will be lost.
-  - You are about to drop the column `championName` on the `Champion` table. All the data in the column will be lost.
-  - The primary key for the `Game` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to drop the column `dateCreate` on the `Game` table. All the data in the column will be lost.
-  - You are about to drop the column `dateEnd` on the `Game` table. All the data in the column will be lost.
-  - You are about to drop the column `id` on the `Game` table. All the data in the column will be lost.
-  - You are about to drop the column `server` on the `Game` table. All the data in the column will be lost.
-  - The primary key for the `Summoner` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to drop the column `gameName` on the `Summoner` table. All the data in the column will be lost.
-  - You are about to drop the column `iconId` on the `Summoner` table. All the data in the column will be lost.
-  - You are about to drop the column `level` on the `Summoner` table. All the data in the column will be lost.
-  - You are about to drop the column `puuId` on the `Summoner` table. All the data in the column will be lost.
-  - You are about to drop the column `rankFlex` on the `Summoner` table. All the data in the column will be lost.
-  - You are about to drop the column `rankSolo` on the `Summoner` table. All the data in the column will be lost.
-  - You are about to drop the column `tagName` on the `Summoner` table. All the data in the column will be lost.
-  - You are about to drop the column `updateDate` on the `Summoner` table. All the data in the column will be lost.
-  - You are about to drop the `Ban` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `GameStat` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Objective` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `SummonerChampion` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Team` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `_GameSummoners` table. If the table is not empty, all the data it contains will be lost.
-  - A unique constraint covering the columns `[key]` on the table `Champion` will be added. If there are existing duplicate values, this will fail.
-  - Added the required column `gameId` to the `Game` table without a default value. This is not possible if the table is not empty.
-  - The required column `puuid` was added to the `Summoner` table with a prisma-level default value. This is not possible if the table is not empty. Please add this column as optional, then populate it before making it required.
+-- CreateTable
+CREATE TABLE "Summoner" (
+    "puuid" TEXT NOT NULL,
+    "id" TEXT,
+    "accountId" BIGINT,
+    "profileIconId" BIGINT,
+    "summonerLevel" BIGINT,
+    "revisionDate" BIGINT,
 
-*/
--- DropForeignKey
-ALTER TABLE "Ban" DROP CONSTRAINT "Ban_teamId_fkey";
-
--- DropForeignKey
-ALTER TABLE "GameStat" DROP CONSTRAINT "GameStat_gameId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Objective" DROP CONSTRAINT "Objective_teamId_fkey";
-
--- DropForeignKey
-ALTER TABLE "SummonerChampion" DROP CONSTRAINT "SummonerChampion_championId_fkey";
-
--- DropForeignKey
-ALTER TABLE "SummonerChampion" DROP CONSTRAINT "SummonerChampion_summonerId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Team" DROP CONSTRAINT "Team_gameId_fkey";
-
--- DropForeignKey
-ALTER TABLE "_GameSummoners" DROP CONSTRAINT "_GameSummoners_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "_GameSummoners" DROP CONSTRAINT "_GameSummoners_B_fkey";
-
--- AlterTable
-ALTER TABLE "Champion" DROP COLUMN "championId",
-DROP COLUMN "championName",
-ADD COLUMN     "blurb" TEXT,
-ADD COLUMN     "full" TEXT,
-ADD COLUMN     "h" INTEGER,
-ADD COLUMN     "key" INTEGER,
-ADD COLUMN     "lore" TEXT,
-ADD COLUMN     "name" TEXT,
-ADD COLUMN     "sprite" TEXT,
-ADD COLUMN     "title" TEXT,
-ADD COLUMN     "type" TEXT,
-ADD COLUMN     "w" INTEGER,
-ADD COLUMN     "x" INTEGER,
-ADD COLUMN     "y" INTEGER;
-
--- AlterTable
-ALTER TABLE "Game" DROP CONSTRAINT "Game_pkey",
-DROP COLUMN "dateCreate",
-DROP COLUMN "dateEnd",
-DROP COLUMN "id",
-DROP COLUMN "server",
-ADD COLUMN     "endOfGameResult" TEXT,
-ADD COLUMN     "gameCreation" BIGINT,
-ADD COLUMN     "gameEndTimestamp" BIGINT,
-ADD COLUMN     "gameId" BIGINT NOT NULL,
-ADD COLUMN     "gameName" TEXT,
-ADD COLUMN     "gameStartTimestamp" BIGINT,
-ADD COLUMN     "gameVersion" TEXT,
-ADD COLUMN     "platformId" TEXT,
-ADD COLUMN     "tournamentCode" TEXT,
-ALTER COLUMN "gameType" DROP NOT NULL,
-ALTER COLUMN "gameMode" DROP NOT NULL,
-ALTER COLUMN "gameDuration" DROP NOT NULL,
-ALTER COLUMN "mapId" DROP NOT NULL,
-ALTER COLUMN "queueId" DROP NOT NULL,
-ADD CONSTRAINT "Game_pkey" PRIMARY KEY ("gameId");
-
--- AlterTable
-ALTER TABLE "Summoner" DROP CONSTRAINT "Summoner_pkey",
-DROP COLUMN "gameName",
-DROP COLUMN "iconId",
-DROP COLUMN "level",
-DROP COLUMN "puuId",
-DROP COLUMN "rankFlex",
-DROP COLUMN "rankSolo",
-DROP COLUMN "tagName",
-DROP COLUMN "updateDate",
-ADD COLUMN     "accountId" BIGINT,
-ADD COLUMN     "id" TEXT,
-ADD COLUMN     "profileIconId" BIGINT,
-ADD COLUMN     "puuid" TEXT NOT NULL,
-ADD COLUMN     "revisionDate" BIGINT,
-ADD COLUMN     "summonerLevel" BIGINT,
-ADD CONSTRAINT "Summoner_pkey" PRIMARY KEY ("puuid");
-
--- DropTable
-DROP TABLE "Ban";
-
--- DropTable
-DROP TABLE "GameStat";
-
--- DropTable
-DROP TABLE "Objective";
-
--- DropTable
-DROP TABLE "SummonerChampion";
-
--- DropTable
-DROP TABLE "Team";
-
--- DropTable
-DROP TABLE "_GameSummoners";
+    CONSTRAINT "Summoner_pkey" PRIMARY KEY ("puuid")
+);
 
 -- CreateTable
 CREATE TABLE "ChampionStats" (
@@ -137,7 +24,7 @@ CREATE TABLE "ChampionStats" (
     "armor" DECIMAL(65,30),
     "armorperlevel" DECIMAL(65,30),
     "spellblock" DECIMAL(65,30),
-    "spellblockperevel" DECIMAL(65,30),
+    "spellblockperlevel" DECIMAL(65,30),
     "attackrange" DECIMAL(65,30),
     "hpregen" DECIMAL(65,30),
     "hpregenperlevel" DECIMAL(65,30),
@@ -152,6 +39,25 @@ CREATE TABLE "ChampionStats" (
     "championid" TEXT NOT NULL,
 
     CONSTRAINT "ChampionStats_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Champion" (
+    "id" TEXT NOT NULL,
+    "key" INTEGER,
+    "name" TEXT,
+    "title" TEXT,
+    "type" TEXT,
+    "lore" TEXT,
+    "blurb" TEXT,
+    "full" TEXT,
+    "sprite" TEXT,
+    "x" INTEGER,
+    "y" INTEGER,
+    "w" INTEGER,
+    "h" INTEGER,
+
+    CONSTRAINT "Champion_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -210,7 +116,7 @@ CREATE TABLE "ChampionOverview" (
     "attack" INTEGER,
     "defense" INTEGER,
     "magic" INTEGER,
-    "difficultty" INTEGER,
+    "difficulty" INTEGER,
     "championId" TEXT NOT NULL,
 
     CONSTRAINT "ChampionOverview_pkey" PRIMARY KEY ("id")
@@ -281,6 +187,26 @@ CREATE TABLE "ChampionsMastery" (
     "championSeasonMilestone" BIGINT,
 
     CONSTRAINT "ChampionsMastery_pkey" PRIMARY KEY ("playerId")
+);
+
+-- CreateTable
+CREATE TABLE "Game" (
+    "gameId" BIGINT NOT NULL,
+    "endOfGameResult" TEXT,
+    "gameCreation" BIGINT,
+    "gameDuration" INTEGER,
+    "gameEndTimestamp" BIGINT,
+    "gameMode" TEXT,
+    "gameName" TEXT,
+    "gameStartTimestamp" BIGINT,
+    "gameType" TEXT,
+    "gameVersion" TEXT,
+    "mapId" INTEGER,
+    "platformId" TEXT,
+    "queueId" INTEGER,
+    "tournamentCode" TEXT,
+
+    CONSTRAINT "Game_pkey" PRIMARY KEY ("gameId")
 );
 
 -- CreateTable
@@ -408,6 +334,18 @@ CREATE TABLE "GameParticipantStats" (
     CONSTRAINT "GameParticipantStats_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Server" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "region" "Region" NOT NULL,
+
+    CONSTRAINT "Server_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Champion_key_key" ON "Champion"("key");
+
 -- CreateIndex
 CREATE UNIQUE INDEX "ChampionOverview_championId_key" ON "ChampionOverview"("championId");
 
@@ -416,9 +354,6 @@ CREATE UNIQUE INDEX "ChampionPassive_championId_key" ON "ChampionPassive"("champ
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ChampionsPlayed_playerId_key" ON "ChampionsPlayed"("playerId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Champion_key_key" ON "Champion"("key");
 
 -- AddForeignKey
 ALTER TABLE "ChampionStats" ADD CONSTRAINT "ChampionStats_championid_fkey" FOREIGN KEY ("championid") REFERENCES "Champion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

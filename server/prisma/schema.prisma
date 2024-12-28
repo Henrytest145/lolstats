@@ -30,7 +30,7 @@ model ChampionStats {
   armor                 Decimal?
   armorperlevel         Decimal?
   spellblock            Decimal?
-  spellblockperevel     Decimal?
+  spellblockperlevel     Decimal?
   attackrange           Decimal?
   hpregen               Decimal?
   hpregenperlevel       Decimal?
@@ -117,7 +117,7 @@ model ChampionOverview {
   attack      Int?
   defense     Int?
   magic       Int?
-  difficultty Int?
+  difficulty Int?
   champion    Champion  @relation(fields: [championId], references: [id])
   championId  String    @unique
 }
@@ -158,6 +158,21 @@ model ChampionPassive {
   description     String?
   champion        Champion    @relation(fields: [championId], references: [id])
   championId      String      @unique
+  spellImagePassive SpellImagePassive[]
+}
+
+model SpellImagePassive {
+  id                  Int             @id @default(autoincrement())
+  full                String?
+  sprite              String?
+  group               String?
+  x                   Int?
+  y                   Int?
+  w                   Int?
+  z                   Int?
+  resource            String?
+  championPassive       ChampionPassive  @relation(fields: [championIdPassive], references: [id])
+  championIdPassive     String
 }
 
 model ChampionsPlayed {
