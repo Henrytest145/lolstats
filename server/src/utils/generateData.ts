@@ -20,6 +20,18 @@ const servers = [
     "vn2"
 ]
 
+const leagues = [
+    "challenger",
+    "grandmaster",
+    "master",
+    "diamond",
+    "platinum",
+    "gold",
+    "silver",
+    "bronze",
+    "iron"
+]
+
 const getServers = async () => {
     const servers = await prisma.server.findMany();
     console.log(servers);
@@ -37,5 +49,21 @@ const createServer = async (name:string, region:Region) => {
 
 }
 
-// createServer("la2", "americas");
+// createServer("na1", "americas");
 // getServers();
+
+const generateLeagues = async () => {
+    for (let i = 0; i < leagues.length; i++) {
+        await prisma.catalogoLigas.create({data:{
+            nombre: leagues[i],
+        }})
+    }
+}
+// generateLeagues();
+
+const generateLeaguesDivisions = async (liga:number, division:number) => {
+    await prisma.liga.create({data:{
+        catalogoLigaId: liga,
+        division: division,
+    }});
+}

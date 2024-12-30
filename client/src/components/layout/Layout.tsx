@@ -8,9 +8,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Drawer
         variant="permanent"
         anchor="left"
-        sx={{ width: "20rem", height: "100vh" }}
+        sx={{ width: "16rem", height: "100vh" }}
         PaperProps={{
-          sx: { width: "20rem", backgroundColor: "red", height: "100vh" },
+          sx: { width: "16rem", backgroundColor: "red", height: "100vh" },
         }}
       >
         <Nav />

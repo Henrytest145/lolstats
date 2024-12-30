@@ -7,13 +7,14 @@ import Patch from './pages/Patch';
 import Player from './pages/Player';
 import Ranking from './pages/Ranking';
 import Stats from './pages/Stats';
-
+import UserProvider from './providers/userProvider';
 function App() {
   const [inputValue, setInputValue] = useState<string>('');
   const [server, setServer] = useState<string>('');
   console.log('valor desde app', inputValue);
 
   return (
+    <UserProvider>
     <Router>
       <Layout>
         <Routes>
@@ -26,6 +27,7 @@ function App() {
         </Routes>
       </Layout>
     </Router>
+    </UserProvider>
   );
 }
 

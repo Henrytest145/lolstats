@@ -1,17 +1,19 @@
+import { useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { Grid2, Paper, Box, Avatar, Typography, ButtonGroup, Button, Divider } from "@mui/material";
 import UserContext from "../utilities/globalContext";
   const Player = () => {
+    const location = useLocation();
+    const fetchedData = location.state?.fetchData;
     const userContext = useContext(UserContext);
     if(!userContext) {
       throw new Error('useUser must be used within a UserProvider');
     }
-    const {user} = userContext;
-
+    const {user, setUser} = userContext;
+    setUser(fetchedData);
     if (!user) {
       throw new Error('User must be defined');
     }
-
     console.log('User: ', user);
     
     return (

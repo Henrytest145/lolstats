@@ -1,7 +1,7 @@
 import { TextField, Grid2, Paper, Select, MenuItem, InputLabel, FormControl, FormHelperText, SelectChangeEvent } from '@mui/material';
-import { ChangeEvent, KeyboardEvent, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useContext, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import UserContext from '../utilities/globalContext';
 interface HomeProps {
   inputValue: string;
   setInputValue: (value: string) => void;
@@ -11,12 +11,12 @@ interface HomeProps {
 
 const Home = ({ inputValue, setInputValue, server, setServer }: HomeProps) => {
   const [error, setError] = useState<string>('');
+  const {setUser} = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
-
 
   const handleServerSelect = (event: SelectChangeEvent<string>) => {
     setServer(event.target.value);
@@ -52,9 +52,8 @@ const Home = ({ inputValue, setInputValue, server, setServer }: HomeProps) => {
         
         if (response.ok) {
           const data = await response.json();
-          console.log(data.data);
-          
-          navigate('/Player',{state:{fetchData:data.data}});
+          setUser(data.data);
+          navigate('/Player');
           return
         } else {
           console.log('Error al consumir la API', response.status);
