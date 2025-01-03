@@ -49,7 +49,6 @@ const Home = ({ inputValue, setInputValue, server, setServer }: HomeProps) => {
             'Content-Type': 'application/json',
           },
         });
-        
         if (response.ok) {
           const data = await response.json();
           setUser(data.data);

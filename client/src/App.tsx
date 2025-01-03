@@ -11,6 +11,7 @@ import UserProvider from './providers/userProvider';
 function App() {
   const [inputValue, setInputValue] = useState<string>('');
   const [server, setServer] = useState<string>('');
+  localStorage.setItem('server', server);
   console.log('valor desde app', inputValue);
 
   return (

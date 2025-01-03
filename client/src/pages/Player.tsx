@@ -1,7 +1,10 @@
 import { useContext } from "react";
 import { Grid2, Paper, Box, Avatar, Typography, ButtonGroup, Button, Divider } from "@mui/material";
 import UserContext from "../utilities/globalContext";
+import PlayerGames from "../components/Player/PlayerGames";
+
   const Player = () => {
+    
     const userContext = useContext(UserContext);
     if(!userContext) {
       throw new Error('useUser must be used within a UserProvider');
@@ -13,6 +16,7 @@ import UserContext from "../utilities/globalContext";
     }
 
     console.log('User: ', user);
+    
     
     return (
       <Paper elevation={9}>
@@ -83,7 +87,7 @@ import UserContext from "../utilities/globalContext";
 
           </Grid2>
           <Grid2 size={8} sx={{backgroundColor: 'red', height: '20rem'}}>
-
+            <PlayerGames></PlayerGames>
           </Grid2>
           <Grid2 size={4} sx={{backgroundColor: 'blue', height: '20rem'}}>
 
